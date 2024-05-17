@@ -28,9 +28,11 @@
                             <a class="nav-link" asp-area="" asp-controller="Brand" asp-action="Index">Brands</a>
                         </li>
                         <li class="nav-item">
+                            <a class="nav-link" asp-area="" asp-controller="MakeupProduct" asp-action="Index">Makeup Products</a>
+                        </li>
+                        <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        
                     </ul>
                 </div>
             </div>
@@ -40,7 +42,6 @@
         <main role="main" class="pb-3">
             <!-- aqui chama o _Notification para aparecerem as boxes com o sucesso ou erro-->
            <partial name="_Notification" />
-
             @RenderBody()
         </main>
     </div>

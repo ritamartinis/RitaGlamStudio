@@ -1,18 +1,18 @@
-﻿@model IEnumerable<Brand>
+﻿@model IEnumerable<MakeupProduct>
 
 <div class="w-100 card border-0 p-4">
     <div class="card-header bg-success bg-gradient ml-0 py-3">
         <div class="row">
             <div class="col-12 text-center">
-                <h2 class="text-white py-2">MAKEUP BRANDS</h2>
+                <h2 class="text-white py-2">LIST OF MAKEUP PRODUCTS</h2>
             </div>
         </div>
     </div>
     <div class="card-body border p-4">
         <div class="row pb-3">
             <div class="col-6 offset-6 text-end">
-                <a asp-controller="Brand" asp-action="Create" class="btn btn-secondary">
-                    <i class="bi bi-plus-circle"></i> Add a new Brand
+                <a asp-controller="MakeupProduct" asp-action="Create" class="btn btn-secondary">
+                    <i class="bi bi-plus-circle"></i> Add a new Product
                 </a>
             </div>
         </div>
@@ -20,7 +20,11 @@
         <table class="table table-bordered table-striped">
             <thead>
                 <tr>
-                    <th class="col-9">Name</th>
+                    <th class="col-3">Name</th>
+                    <th class="col-2">Brand</th>
+                    <th class="col-2">Category</th>
+                    <th class="col-1">Price</th>
+                    <th class="col-4">Description</th>
                     <th class="col-4"></th>
 
                 </tr>
@@ -31,12 +35,16 @@
                 {
                     <tr>
                         <td>@obj.Name</td>
+                        <td>@obj.BrandId</td>
+                        <td>@obj.CategoryId</td>
+                        <td>@obj.Price</td>
+                        <td>@obj.Description</td>
                         <td>
                             <div class="w-75 btn-group" role="group">
-                                <a asp-action="Update" asp-route-brandId="@obj.Id" class="btn btn-success mx-2">
+                                <a asp-action="Update" asp-route-makeupProductId="@obj.Id" class="btn btn-success mx-2">
                                     <i class="bi bi-pencil-square"></i> Edit
                                 </a>
-                                <a asp-action="Delete" asp-route-brandId="@obj.Id" class="btn btn-danger mx-2">
+                                <a asp-action="Delete" asp-route-makeupProductId="@obj.Id" class="btn btn-danger mx-2">
                                     <i class="bi bi-trash-fill"></i> Delete
                                 </a>
                             </div>

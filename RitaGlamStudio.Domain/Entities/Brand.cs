@@ -6,7 +6,7 @@ namespace RitaGlamStudio.Domain.Entities
     {
         public int Id { get; set; }
 
-        [MaxLength(50)]
+        [MaxLength(20)]
         public required string Name { get; set; }
     }
 }
