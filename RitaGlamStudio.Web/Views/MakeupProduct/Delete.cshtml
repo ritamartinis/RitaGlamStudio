@@ -1,0 +1,76 @@
+﻿@model MakeupProductVM
+
+<div class="w-100 card border-0 p-4">
+	<div class="card-header bg-success bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">Delete Product</h2>
+			</div>
+		</div>
+	</div>
+	<div class="card-body border p-4">
+		<form method="post" class="row">
+			<div class="p-3">
+				<input asp-for="@Model.MakeupProduct.Id" hidden />       @*PARA EDITAR, É PRECISO COLOCAR NO HTML O CAMPO DO ID PARA ELE NÃO CRIAR UM NOVO. *@
+
+				<div class="form-floating py-1 col-12">
+					<!-- campos disabled não são enviados no formulário, então transformei em "readonly" -->
+					<input asp-for="@Model.MakeupProduct.Name" disabled class="form-control border shadow" />
+					<label asp-for="@Model.MakeupProduct.Name" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.Name" class="text-danger"></span>
+				</div>
+
+				<div class="form-floating py-1 col-12">
+					<select disabled asp-for="@Model.MakeupProduct.BrandId" asp-items="@Model.BrandItems" class="form-control border shadow">
+						<option disabled selected> -- Select a Brand --</option>
+					</select>
+					<label asp-for="@Model.MakeupProduct.BrandId" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.BrandId" class="text-danger"></span>
+				</div>
+
+				<div class="form-floating py-1 col-12">
+					<select disabled asp-for="@Model.MakeupProduct.CategoryId" asp-items="@Model.CategoryItems" class="form-control border shadow">
+						<option disabled selected> -- Select a Category --</option>
+					</select>
+					<label asp-for="@Model.MakeupProduct.CategoryId" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.CategoryId" class="text-danger"></span>
+				</div>
+
+				<div class="form-floating py-1 col-12">
+					<input asp-for="@Model.MakeupProduct.Price" disabled class="form-control border shadow" />
+					<label asp-for="@Model.MakeupProduct.Price" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.Price" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-1 col-12">
+					<input asp-for="@Model.MakeupProduct.Stock" disabled class="form-control border shadow" />
+					<label asp-for="@Model.MakeupProduct.Stock" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.Stock" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-1 col-12">
+					<input asp-for="@Model.MakeupProduct.Description" disabled class="form-control border shadow" />
+					<label asp-for="@Model.MakeupProduct.Description" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.Description" class="text-danger"></span>
+				</div>
+				<div class="form-floating py-1 col-12">
+					<input asp-for="@Model.MakeupProduct.ImageUrl" disabled class="form-control border shadow" />
+					<label asp-for="@Model.MakeupProduct.ImageUrl" class="ms-2"></label>
+					<span asp-validation-for="@Model.MakeupProduct.ImageUrl" class="text-danger"></span>
+				</div>
+
+				<div class="row pt-2">
+					<div class="col-6 col-md-3">
+						<button type="submit" class="btn btn-danger w-100">
+							<i class="bi bi-trash-fill"></i> Delete
+						</button>
+					</div>
+					<div class="col-6 col-md-3">
+						<a asp-action="Index" class="btn btn-secondary w-100">
+							<i class="bi bi-x-circle"></i> Cancel
+						</a>
+					</div>
+				</div>
+			</div>
+		</form>
+	</div>
+</div>
+
