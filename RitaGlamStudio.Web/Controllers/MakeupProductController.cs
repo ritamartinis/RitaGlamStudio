@@ -1,29 +1,34 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
+using RitaGlamStudio.Application.Common.Interfaces;
 using RitaGlamStudio.Domain.Entities;
-using RitaGlamStudio.Infrastructure.Data;
 using RitaGlamStudio.Web.ViewModels;
 
 namespace RitaGlamStudio.Web.Controllers
 {
-    public class MakeupProductController : Controller
+	public class MakeupProductController : Controller
     {
-        private readonly ApplicationDbContext _db;
+		//Não vamos aceder diretamente ao repositório, vamos passar primeiro pela interface
+		//Tudo através do UnitOfWork
+		private readonly IUnitOfWork _unitOfWork;
 
-        public MakeupProductController(ApplicationDbContext db)               //Construtor
-        {
-            _db = db;
-        }
+		//para as imagens
+		private readonly IWebHostEnvironment _webHostEnvironment;
+
+		//Construtor
+		//Estamos a aceder através do repositório
+		public MakeupProductController(IUnitOfWork unitOfWork, IWebHostEnvironment webHostEnvironment)
+		{
+			_unitOfWork = unitOfWork;
+			_webHostEnvironment = webHostEnvironment;
+		}
 
         public IActionResult Index()
         {
-            var makeupProducts = _db.MakeupProducts
-                .Include(u=>u.Brand)
-                .Include(x=>x.Category)
-                .ToList();
+            var makeupProducts = _unitOfWork.MakeupProduct.GetAll(includeProperties: "Brand, Category");
 
-            return View(makeupProducts);
+			return View(makeupProducts);
         }
 
         // -- MAKEUP PRODUCTS -- 
@@ -37,7 +42,7 @@ namespace RitaGlamStudio.Web.Controllers
             MakeupProductVM makeupProductVM = new()
             {
                 //Estamos a criar um dropdown (um select) mas mostra nos produtos os id das marcas
-                BrandItems = _db.Brands.ToList().Select(u => new SelectListItem
+                BrandItems = _unitOfWork.Brand.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString(),
@@ -45,7 +50,7 @@ namespace RitaGlamStudio.Web.Controllers
                 }),
 
                 //Mesma coisa para a categoria - vai buscar os ids das categorias
-                CategoryItems = _db.Categories.ToList().Select(u => new SelectListItem
+                CategoryItems = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
@@ -60,15 +65,39 @@ namespace RitaGlamStudio.Web.Controllers
         [ValidateAntiForgeryToken]  //para segurança
         public IActionResult Create(MakeupProductVM obj)
         {
-            bool nameExists = _db.MakeupProducts.Any(u => u.Name == obj.MakeupProduct.Name);
+            bool nameExists = _unitOfWork.MakeupProduct.Any(u => u.Name == obj.MakeupProduct.Name);
 
             if (obj.MakeupProduct.Name == obj.MakeupProduct.Description)
                 ModelState.AddModelError("Name", "The Description cannot be a exact match to be Name");
 
-            if (ModelState.IsValid && !nameExists)                 //validações do lado do servidor
+            if (ModelState.IsValid && !nameExists)                      //validações do lado do servidor
             {
-                _db.MakeupProducts.Add(obj.MakeupProduct);        //para injectar na bd
-                _db.SaveChanges();                  //vai ver que alterações foram preparadas e faz save na bd
+				//File Upload
+				if (obj.MakeupProduct.Image is not null)
+				{
+					//Devemos gerar sempre nomes aleatórios na bd para que ela não estoire cada vez que o user faz upload de uma
+					string fileName = Guid.NewGuid().ToString() + Path.GetExtension(obj.MakeupProduct.Image.FileName);
+					//Guid é o que garante o nome igual. Defini aqui o nome para a imagem
+					//Preciso também da extensão da imagem. Esse comando é o que esta a seguir ao +. 
+					//onde vou guardar a imagem?
+					string imagePath = Path.Combine(_webHostEnvironment.WebRootPath, @"images\productimages");
+					//(vai dar ao caminho até à nossa pasta: www.root + o caminho para as pastas)
+
+					//proteção para a bd não estoirar
+					using (var fileStream = new FileStream(Path.Combine(imagePath, fileName), FileMode.Create))
+					{
+						obj.MakeupProduct.Image.CopyTo(fileStream);
+					}
+					obj.MakeupProduct.ImageUrl = @"\images\productimages\" + fileName;
+				}
+				else
+				{
+					//Se o user não colocar imagem, é colocado esta por default
+					obj.MakeupProduct.ImageUrl = "https://placehold.co/600x400";
+				}
+
+				_unitOfWork.MakeupProduct.Add(obj.MakeupProduct);        //para injectar na bd
+				_unitOfWork.Save();                                      //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "The Product has been created sucessfully!";
                 return RedirectToAction(nameof(Index));
@@ -79,14 +108,14 @@ namespace RitaGlamStudio.Web.Controllers
                 TempData["error"] = "The Product Name already exists.";
             }
 
-            obj.BrandItems = _db.Brands.ToList().Select(u => new SelectListItem
+            obj.BrandItems = _unitOfWork.Brand.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.Id.ToString(),
 
             });
 
-            obj.CategoryItems = _db.Categories.ToList().Select(u => new SelectListItem
+            obj.CategoryItems = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
             {
                 Text = u.Name,
                 Value = u.Id.ToString()
@@ -104,7 +133,7 @@ namespace RitaGlamStudio.Web.Controllers
             MakeupProductVM makeupProductVM = new()
             {
                 //Estamos a criar um dropdown (um select) mas mostra nos produtos os id das marcas
-                BrandItems = _db.Brands.ToList().Select(u => new SelectListItem
+                BrandItems = _unitOfWork.Brand.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString(),
@@ -112,13 +141,13 @@ namespace RitaGlamStudio.Web.Controllers
                 }),
 
                 //Mesma coisa para a categoria - vai buscar os ids das categorias
-                CategoryItems = _db.Categories.ToList().Select(u => new SelectListItem
+                CategoryItems = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
                 {
                     Text = u.Name,
                     Value = u.Id.ToString()
                 }),
                 //Se o id for == ao makeupProductId, ele vai pôr aqui os dados todos
-                MakeupProduct = _db.MakeupProducts.FirstOrDefault(_=>_.Id == makeupProductId)!
+                MakeupProduct = _unitOfWork.MakeupProduct.Get(_=>_.Id == makeupProductId)
             };
 
             if (makeupProductVM.MakeupProduct is null)
@@ -139,21 +168,21 @@ namespace RitaGlamStudio.Web.Controllers
 
 			if (ModelState.IsValid)                                               //validações do lado do servidor
 			{
-				_db.MakeupProducts.Update(makeupProductVM.MakeupProduct);        //para injectar na bd
-				_db.SaveChanges();                                              //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.MakeupProduct.Update(makeupProductVM.MakeupProduct);        //para injectar na bd
+				_unitOfWork.Save();                                                     //vai ver que alterações foram preparadas e faz save na bd
 
 				TempData["success"] = "The Product has been updated sucessfully!";
 				return RedirectToAction(nameof(Index));
 			}
 
-			makeupProductVM.BrandItems = _db.Brands.ToList().Select(u => new SelectListItem
+			makeupProductVM.BrandItems = _unitOfWork.Brand.GetAll().Select(u => new SelectListItem
 			{
 				Text = u.Name,
 				Value = u.Id.ToString(),
 
 			});
 
-			makeupProductVM.CategoryItems = _db.Categories.ToList().Select(u => new SelectListItem
+			makeupProductVM.CategoryItems = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
 			{
 				Text = u.Name,
 				Value = u.Id.ToString()
@@ -171,7 +200,7 @@ namespace RitaGlamStudio.Web.Controllers
 			MakeupProductVM makeupProductVM = new()
 			{
 				//Estamos a criar um dropdown (um select) mas mostra nos produtos os id das marcas
-				BrandItems = _db.Brands.ToList().Select(u => new SelectListItem
+				BrandItems = _unitOfWork.Brand.GetAll().Select(u => new SelectListItem
 				{
 					Text = u.Name,
 					Value = u.Id.ToString(),
@@ -179,13 +208,13 @@ namespace RitaGlamStudio.Web.Controllers
 				}),
 
 				//Mesma coisa para a categoria - vai buscar os ids das categorias
-				CategoryItems = _db.Categories.ToList().Select(u => new SelectListItem
+				CategoryItems = _unitOfWork.Category.GetAll().Select(u => new SelectListItem
 				{
 					Text = u.Name,
 					Value = u.Id.ToString()
 				}),
 				//Se o id for == ao makeupProductId, ele vai pôr aqui os dados todos
-				MakeupProduct = _db.MakeupProducts.FirstOrDefault(_ => _.Id == makeupProductId)!
+				MakeupProduct = _unitOfWork.MakeupProduct.Get(_ => _.Id == makeupProductId)
 			};
 
 			if (makeupProductVM.MakeupProduct is null)
@@ -199,12 +228,12 @@ namespace RitaGlamStudio.Web.Controllers
 		[HttpPost]
         public IActionResult Delete(MakeupProductVM makeupProductVM)
         {
-            MakeupProduct? objFromDb = _db.MakeupProducts.FirstOrDefault(_ => _.Id == makeupProductVM.MakeupProduct.Id);
+            MakeupProduct? objFromDb = _unitOfWork.MakeupProduct.Get(_ => _.Id == makeupProductVM.MakeupProduct.Id);
 
             if (objFromDb is not null)
             {
-                _db.MakeupProducts.Remove(objFromDb);
-                _db.SaveChanges();              //vai ver que alterações foram preparadas e faz save na bd
+                _unitOfWork.MakeupProduct.Remove(objFromDb);
+                _unitOfWork.Save();                                     //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "The Product has been deleted sucessfully!";
                 return RedirectToAction(nameof(Index));

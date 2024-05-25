@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
+using RitaGlamStudio.Application.Common.Interfaces;
 using RitaGlamStudio.Infrastructure.Data;
+using RitaGlamStudio.Infrastructure.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,10 @@ builder.Services.AddControllersWithViews();
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 // => significa "vai para"
+
+//Adicionar apenas o Repositório do Unit of Work
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();    //Sempre primeiro o Repositório e depois a Classe. A interface está no .Application e o repositório no .Infrastructure
+														  //Basta apenas este, e não todos os outros, porque este é o wrapper de todos os outros.
 
 var app = builder.Build();
 

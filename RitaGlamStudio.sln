@@ -5,11 +5,14 @@ VisualStudioVersion = 17.9.34728.123
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RitaGlamStudio.Web", "RitaGlamStudio.Web\RitaGlamStudio.Web.csproj", "{FF97FD98-788D-445A-A69F-73AED918E7A4}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RitaGlamStudio.Domain", "RitaGlamStudio.Domain\RitaGlamStudio.Domain.csproj", "{25FF6A62-3247-4FED-B8FF-7E3B8FD9D2BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RitaGlamStudio.Domain", "RitaGlamStudio.Domain\RitaGlamStudio.Domain.csproj", "{25FF6A62-3247-4FED-B8FF-7E3B8FD9D2BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RitaGlamStudio.Application", "RitaGlamStudio.Application\RitaGlamStudio.Application.csproj", "{2AE0F211-751E-49F7-B0B1-5A6761A74919}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RitaGlamStudio.Application", "RitaGlamStudio.Application\RitaGlamStudio.Application.csproj", "{2AE0F211-751E-49F7-B0B1-5A6761A74919}"
+	ProjectSection(ProjectDependencies) = postProject
+		{25FF6A62-3247-4FED-B8FF-7E3B8FD9D2BC} = {25FF6A62-3247-4FED-B8FF-7E3B8FD9D2BC}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RitaGlamStudio.Infrastructure", "RitaGlamStudio.Infrastructure\RitaGlamStudio.Infrastructure.csproj", "{86B4C508-0DC5-4579-86A5-D9CE89E1AD6E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RitaGlamStudio.Infrastructure", "RitaGlamStudio.Infrastructure\RitaGlamStudio.Infrastructure.csproj", "{86B4C508-0DC5-4579-86A5-D9CE89E1AD6E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

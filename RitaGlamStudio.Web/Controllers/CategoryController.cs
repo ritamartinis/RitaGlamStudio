@@ -1,21 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RitaGlamStudio.Application.Common.Interfaces;
 using RitaGlamStudio.Domain.Entities;
-using RitaGlamStudio.Infrastructure.Data;
 
 namespace RitaGlamStudio.Web.Controllers
 {
-    public class CategoryController : Controller
+	public class CategoryController : Controller
     {
-        private readonly ApplicationDbContext _db;
+		//Não vamos aceder diretamente ao repositório, vamos passar primeiro pela interface
+		//Tudo através do UnitOfWork
+		private readonly IUnitOfWork _unitOfWork;
 
-        public CategoryController(ApplicationDbContext db)               //Construtor
+		//Construtor
+		public CategoryController(IUnitOfWork unitOfWork)               
         {
-            _db = db;
-        }
+			_unitOfWork = unitOfWork;
+		}
 
         public IActionResult Index()
         {
-            var categories = _db.Categories.ToList();
+            var categories = _unitOfWork.Category.GetAll();
 
             return View(categories);
         }
@@ -37,8 +40,8 @@ namespace RitaGlamStudio.Web.Controllers
         {
             if (ModelState.IsValid)             //validações do lado do servidor
             {
-                _db.Categories.Add(obj);    //para injectar na bd
-                _db.SaveChanges();          //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Category.Add(obj);         //para injectar na bd
+				_unitOfWork.Save();                     //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Category has been created sucessfully!";
                 return RedirectToAction(nameof(Index));
@@ -53,7 +56,7 @@ namespace RitaGlamStudio.Web.Controllers
         public IActionResult Update(int categoryId)
         {
             //Aqui estou a aceder à bd, a comparar com o id que foi selecionado pelo clique do get
-            Category? obj = _db.Categories.FirstOrDefault(x => x.Id == categoryId);
+            Category? obj = _unitOfWork.Category.Get(x => x.Id == categoryId);
 
             if (obj is null)
             {
@@ -70,8 +73,8 @@ namespace RitaGlamStudio.Web.Controllers
             if (ModelState.IsValid && obj.Id > 0)             //validações do lado do servidor
                                                               //segurança adicional - se o Id for zero, nunca dá update. Zero é para criar.
             {
-                _db.Categories.Update(obj);         //para injectar na bd c/o update
-                _db.SaveChanges();                  //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Category.Update(obj);              //para injectar na bd c/o update
+				_unitOfWork.Save();                             //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Category has been updated sucessfully!";
                 return RedirectToAction(nameof(Index));
@@ -85,7 +88,7 @@ namespace RitaGlamStudio.Web.Controllers
         public IActionResult Delete(int categoryId)
         {
             //Aqui estou a aceder à bd, a comparar com o id que foi selecionado pelo clique do get
-            Category? obj = _db.Categories.FirstOrDefault(x => x.Id == categoryId);
+            Category? obj = _unitOfWork.Category.Get(x => x.Id == categoryId);
 
             if (obj is null)
             {
@@ -99,12 +102,12 @@ namespace RitaGlamStudio.Web.Controllers
         [HttpPost]
         public IActionResult Delete(Category obj)  
         {
-            Category? objFromDb = _db.Categories.FirstOrDefault(_ => _.Id == obj.Id);
+            Category? objFromDb = _unitOfWork.Category.Get(_ => _.Id == obj.Id);
 
             if (objFromDb is not null)
             {
-                _db.Categories.Remove(objFromDb);
-                _db.SaveChanges();              //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Category.Remove(objFromDb);
+				_unitOfWork.Save();                         //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Category has been deleted sucessfully!";
                 return RedirectToAction(nameof(Index));

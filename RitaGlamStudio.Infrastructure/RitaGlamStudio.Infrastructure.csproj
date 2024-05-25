@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RitaGlamStudio.Domain\RitaGlamStudio.Domain.csproj" />
+    <ProjectReference Include="..\RitaGlamStudio.Application\RitaGlamStudio.Application.csproj" />
   </ItemGroup>
 
 </Project>

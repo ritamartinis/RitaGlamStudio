@@ -1,21 +1,24 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using RitaGlamStudio.Application.Common.Interfaces;
 using RitaGlamStudio.Domain.Entities;
-using RitaGlamStudio.Infrastructure.Data;
 
 namespace RitaGlamStudio.Web.Controllers
 {
-    public class BrandController : Controller
+	public class BrandController : Controller
     {
-        private readonly ApplicationDbContext _db;
+        //Não vamos aceder diretamente ao repositório, vamos passar primeiro pela interface
+        //Tudo através do UnitOfWork
+        private readonly IUnitOfWork _unitOfWork;
 
-        public BrandController(ApplicationDbContext db)               //Construtor
+		//Construtor
+		public BrandController(IUnitOfWork unitOfWork)              
         {
-            _db = db;
+			_unitOfWork = unitOfWork;
         }
 
         public IActionResult Index()
         {
-            var brands = _db.Brands.ToList();
+            var brands = _unitOfWork.Brand.GetAll();
 
             return View(brands);
         }
@@ -37,8 +40,8 @@ namespace RitaGlamStudio.Web.Controllers
         {
             if (ModelState.IsValid)             //validações do lado do servidor
             {
-                _db.Brands.Add(obj);        //para injectar na bd
-                _db.SaveChanges();          //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Brand.Add(obj);
+				_unitOfWork.Save();              //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Brand has been created sucessfully!";
                 return RedirectToAction(nameof(Index));
@@ -52,8 +55,8 @@ namespace RitaGlamStudio.Web.Controllers
         //GET - este é para, depois de selecionar qual é aquele que quero editar, recebe o id 
         public IActionResult Update(int brandId)
         {
-            //Aqui estou a aceder à bd, a comparar com o id que foi selecionado pelo clique do get
-            Brand? obj = _db.Brands.FirstOrDefault(x => x.Id == brandId);
+            //Aqui estou a aceder ao Get - no repositório - , a comparar com o id que foi selecionado pelo clique do get
+            Brand? obj = _unitOfWork.Brand.Get(x => x.Id == brandId);
 
             if (obj is null)
             {
@@ -70,8 +73,8 @@ namespace RitaGlamStudio.Web.Controllers
             if (ModelState.IsValid && obj.Id > 0)             //validações do lado do servidor
                                                               //segurança adicional - se o Id for zero, nunca dá update. Zero é para criar.
             {
-                _db.Brands.Update(obj);             //para injectar na bd c/o update
-                _db.SaveChanges();                  //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Brand.Update(obj);             //para injectar na bd c/o update
+				_unitOfWork.Save();                      //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Brand has been updated sucessfully!";
                 return RedirectToAction(nameof(Index));
@@ -85,7 +88,7 @@ namespace RitaGlamStudio.Web.Controllers
         public IActionResult Delete(int brandId)
         {
             //Aqui estou a aceder à bd, a comparar com o id que foi selecionado pelo clique do get
-            Brand? obj = _db.Brands.FirstOrDefault(x => x.Id == brandId);
+            Brand? obj = _unitOfWork.Brand.Get(x => x.Id == brandId);
 
             if (obj is null)
             {
@@ -99,12 +102,12 @@ namespace RitaGlamStudio.Web.Controllers
         [HttpPost]
         public IActionResult Delete(Brand obj)  
         {
-            Brand? objFromDb = _db.Brands.FirstOrDefault(_ => _.Id == obj.Id);
+            Brand? objFromDb = _unitOfWork.Brand.Get(_ => _.Id == obj.Id);
 
             if (objFromDb is not null)
             {
-                _db.Brands.Remove(objFromDb);
-                _db.SaveChanges();              //vai ver que alterações foram preparadas e faz save na bd
+				_unitOfWork.Brand.Remove(objFromDb);
+				_unitOfWork.Save();                          //vai ver que alterações foram preparadas e faz save na bd
 
                 TempData["success"] = "Brand has been deleted sucessfully!";
                 return RedirectToAction(nameof(Index));

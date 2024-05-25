@@ -18,4 +18,8 @@
     <ProjectReference Include="..\RitaGlamStudio.Infrastructure\RitaGlamStudio.Infrastructure.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="wwwroot\images\productimages\" />
+  </ItemGroup>
+
 </Project>

@@ -12,7 +12,7 @@
 		<form method="post" class="row">
 			<!-- <div asp-validation-summary="ModelOnly" class="text-danger"></div>      Um sumário dos erros personalizados, que aparece em cima -->
 			<input asp-for="@Model.MakeupProduct.Id" hidden />       @*PARA EDITAR, É PRECISO COLOCAR NO HTML O CAMPO DO ID PARA ELE NÃO CRIAR UM NOVO. *@
-
+			<div class="col-10">
 			<div class="p-3">
 				<div class="form-floating py-1 col-12">
 					<!-- campos disabled não são enviados no formulário, então transformei em "readonly" -->
@@ -70,6 +70,10 @@
 						</a>
 					</div>
 				</div>
+			</div>
+		</div>
+		<div class="col-2">
+				<img src="@Model.MakeupProduct.ImageUrl" style="border-radius:5px; border: 1px solid #bbb9b9; width: 100%" />
 			</div>
 		</form>
 	</div>
