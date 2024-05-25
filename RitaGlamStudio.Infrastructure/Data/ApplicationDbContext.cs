@@ -18,6 +18,9 @@ namespace RitaGlamStudio.Infrastructure.Data
         //3º modelo a ser criado
         public DbSet<MakeupProduct> MakeupProducts { get; set; }
 
+        //4º modelo a ser criado
+        public DbSet<MakeupReview> MakeupReviews { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //base.OnModelCreating(modelBuilder);
@@ -145,6 +148,55 @@ namespace RitaGlamStudio.Infrastructure.Data
                     ImageUrl = "https://example.com/urban-decay-naked.jpg"
                 }
             );
+
+            modelBuilder.Entity<MakeupReview>().HasData(
+
+                new MakeupReview
+                {
+                    Id = 1,
+                    MakeupProductId = 1,
+                    ClientName = "Elisabeth Smith",
+                    Review = "This lipstick is my all time favorite.",
+                    Rating = 5,
+                    ReviewDate = new DateTime(2024, 5, 18)
+                },
+                new MakeupReview
+                {
+                    Id = 2,
+                    MakeupProductId = 2,
+                    ClientName = "Joana Higgins",
+                    Review = "This mascara is great, but it smudges a little.",
+                    Rating = 4,
+                    ReviewDate = new DateTime(2024, 5, 21)
+                },
+                new MakeupReview
+                {
+                    Id = 3,
+                    MakeupProductId = 3,
+                    ClientName = "Jane Roe",
+                    Review = "The foundation has a perfect match for my skin tone.",
+                    Rating = 5,
+                    ReviewDate = new DateTime(2024, 5, 23)
+                },
+                new MakeupReview
+                {
+                Id = 4,
+                MakeupProductId = 4,
+                ClientName = "Alice Johnson",
+                Review = "The concealer works well but is a bit pricey.",
+                Rating = 3,
+                ReviewDate = new DateTime(2024, 5, 24)
+                },
+                new MakeupReview
+                {
+                Id = 5,
+                MakeupProductId = 5,
+                ClientName = "Bob Brown",
+                Review = "The eyeshadow palette has amazing colors and great pigmentation.",
+                Rating = 5,
+                ReviewDate = new DateTime(2024, 5, 25)
+                }
+             );
         }
     }
 }

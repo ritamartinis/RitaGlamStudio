@@ -1,57 +1,58 @@
 ﻿@model IEnumerable<MakeupProduct>
 
 <div class="w-100 card border-0 p-4">
-    <div class="card-header bg-success bg-gradient ml-0 py-3">
-        <div class="row">
-            <div class="col-12 text-center">
-                <h2 class="text-white py-2">LIST OF MAKEUP PRODUCTS</h2>
-            </div>
-        </div>
-    </div>
-    <div class="card-body border p-4">
-        <div class="row pb-3">
-            <div class="col-6 offset-6 text-end">
-                <a asp-controller="MakeupProduct" asp-action="Create" class="btn btn-secondary">
-                    <i class="bi bi-plus-circle"></i> Add a new Product
-                </a>
-            </div>
-        </div>
+	<div class="card-header bg-success bg-gradient ml-0 py-3">
+		<div class="row">
+			<div class="col-12 text-center">
+				<h2 class="text-white py-2">LIST OF MAKEUP PRODUCTS</h2>
+			</div>
+		</div>
+	</div>
+	<div class="card-body border p-4">
+		<div class="row pb-3">
+			<div class="col-6 offset-6 text-end">
+				<a asp-controller="MakeupProduct" asp-action="Create" class="btn btn-secondary">
+					<i class="bi bi-plus-circle"></i> Add a new Product
+				</a>
+			</div>
+		</div>
 
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th class="col-3">Name</th>
-                    <th class="col-2">Brand</th>
-                    <th class="col-2">Category</th>
-                    <th class="col-1">Price</th>
-                    <th class="col-4">Description</th>
-                    <th class="col-4"></th>
+		<div class="table-responsive">
+			<table class="table table-bordered table-striped">
+				<thead>
+					<tr>
+						<th class="text-nowrap">Name</th>
+						<th class="text-nowrap">Brand</th>
+						<th class="text-nowrap">Category</th>
+						<th class="text-nowrap">Price</th>
+						<th class="text-nowrap">Description</th>
+						<th class="text-nowrap"></th>
+					</tr>
+				</thead>
 
-                </tr>
-            </thead>
-
-            <tbody>
-                @foreach (var obj in Model)
-                {
-                    <tr>
-                        <td>@obj.Name</td>
-                        <td>@obj.Brand.Name</td>
-                        <td>@obj.Category.Name</td>
-                        <td>@obj.Price</td>
-                        <td>@obj.Description</td>
-                        <td>
-                            <div class="w-75 btn-group" role="group">
-                                <a asp-action="Update" asp-route-makeupProductId="@obj.Id" class="btn btn-success mx-2">
-                                    <i class="bi bi-pencil-square"></i> Edit
-                                </a>
-                                <a asp-action="Delete" asp-route-makeupProductId="@obj.Id" class="btn btn-danger mx-2">
-                                    <i class="bi bi-trash-fill"></i> Delete
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
+				<tbody>
+					@foreach (var obj in Model)
+					{
+						<tr>
+							<td class="text-nowrap">@obj.Name</td>
+							<td class="text-nowrap">@obj.Brand.Name</td>
+							<td class="text-nowrap">@obj.Category.Name</td>
+							<td class="text-nowrap">@obj.Price</td>
+							<td class="text-nowrap">@obj.Description</td>
+							<td class="text-nowrap">
+								<div class="btn-group" role="group">
+									<a asp-action="Update" asp-route-makeupProductId="@obj.Id" class="btn btn-success mx-2">
+										<i class="bi bi-pencil-square"></i> Edit
+									</a>
+									<a asp-action="Delete" asp-route-makeupProductId="@obj.Id" class="btn btn-danger mx-2">
+										<i class="bi bi-trash-fill"></i> Delete
+									</a>
+								</div>
+							</td>
+						</tr>
+					}
+				</tbody>
+			</table>
+		</div>
+	</div>
 </div>

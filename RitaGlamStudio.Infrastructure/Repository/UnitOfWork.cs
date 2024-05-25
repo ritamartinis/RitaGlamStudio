@@ -16,13 +16,15 @@ namespace RitaGlamStudio.Infrastructure.Repository
 			Brand = new BrandRepository(db);
 			Category = new CategoryRepository(db);
 			MakeupProduct = new MakeupProductRepository(db);
-		}
+            MakeupReview = new MakeupReviewRepository(db);
+        }
 
 		public IBrandRepository Brand { get; private set; }
 		public ICategoryRepository Category { get; private set; }
 		public IMakeupProductRepository MakeupProduct { get; private set; }
+        public IMakeupReviewRepository MakeupReview { get; private set; }
 
-		public void Save()
+        public void Save()
 		{
 			_db.SaveChanges();
 		}

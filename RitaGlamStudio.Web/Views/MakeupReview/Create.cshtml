@@ -1,0 +1,67 @@
+﻿@model MakeupReviewVM
+
+<div class="w-100 card border-0 p-4">
+    <div class="card-header bg-success bg-gradient ml-0 py-3">
+        <div class="row">
+            <div class="col-12 text-center">
+                <h2 class="text-white py-2">Add a new Review</h2>
+            </div>
+        </div>
+    </div>
+    <div class="card-body border p-4">
+        <form method="post" class="row">
+            <div class="p-3">
+                <!-- <div asp-validation-summary="ModelOnly" class="text-danger"></div>      Um sumário dos erros personalizados, que aparece em cima -->
+
+                <div class="form-floating py-1 col-12">
+                    <select asp-for="@Model.MakeupReview.MakeupProductId" asp-items="@Model.MakeupProductItems" class="form-control border shadow">
+                        <option disabled selected> -- Select a Product --</option>
+                    </select>
+                    <label asp-for="@Model.MakeupReview.MakeupProductId" class="ms-2"></label>
+                    <span asp-validation-for="@Model.MakeupReview.MakeupProductId" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="@Model.MakeupReview.ClientName" class="form-control border shadow" />
+                    <label asp-for="@Model.MakeupReview.ClientName" class="ms-2"></label>
+                    <span asp-validation-for="@Model.MakeupReview.ClientName" class="text-danger"></span>
+                </div>
+
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="@Model.MakeupReview.Review" class="form-control border shadow" />
+                    <label asp-for="@Model.MakeupReview.Review" class="ms-2"></label>
+                    <span asp-validation-for="@Model.MakeupReview.Review" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="@Model.MakeupReview.Rating" class="form-control border shadow" />
+                    <label asp-for="@Model.MakeupReview.Rating" class="ms-2"></label>
+                    <span asp-validation-for="@Model.MakeupReview.Rating" class="text-danger"></span>
+                </div>
+                <div class="form-floating py-1 col-12">
+                    <input asp-for="@Model.MakeupReview.ReviewDate" class="form-control border shadow" />
+                    <label asp-for="@Model.MakeupReview.ReviewDate" class="ms-2"></label>
+                    <span asp-validation-for="@Model.MakeupReview.ReviewDate" class="text-danger"></span>
+                </div>
+
+                <div class="row pt-2">
+                    <div class="col-6 col-md-3">
+                        <button type="submit" class="btn btn-success w-100">
+                            <i class="bi bi-check-circle"></i> Add
+                        </button>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <a asp-action="Index" class="btn btn-secondary w-100">
+                            <i class="bi bi-x-circle"></i> Cancel
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Para incluir as validações do lado do cliente -->
+<!-- Só faz sentido acrescentar este script em páginas que têm formulários -->
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}
